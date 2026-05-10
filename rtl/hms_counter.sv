@@ -29,7 +29,7 @@ module hms_counter #(
 
 
   up_down_counter #(
-      .MAX  (N_SECONDS),
+      .MAX  (N_SECONDS - 1),
       .WIDTH(W_SECONDS)
   ) u_second (
       .clk(clk),
@@ -39,7 +39,7 @@ module hms_counter #(
   );
 
   up_down_counter #(
-      .MAX  (N_MINUTES),
+      .MAX  (N_MINUTES - 1),
       .WIDTH(W_MINUTES)
   ) u_minute (
       .clk(clk),
@@ -49,7 +49,7 @@ module hms_counter #(
   );
 
   up_down_counter #(
-      .MAX  (N_HOURS),
+      .MAX  (N_HOURS - 1),
       .WIDTH(W_HOURS)
   ) u_hour (
       .clk(clk),
@@ -57,26 +57,5 @@ module hms_counter #(
       .up(1'b1),
       .count(hours)
   );
-
-
-  //   always_ff @(posedge clk) begin
-  //     if (enable) begin
-  //       if (seconds == N_SECONDS - 1) begin
-  //         seconds <= 0;
-  //         if (minutes == N_MINUTES - 1) begin
-  //           minutes <= 0;
-  //           if (hours == N_HOURS - 1) begin
-  //             hours <= 0;
-  //           end else begin
-  //             hours <= hours + 1;
-  //           end
-  //         end else begin
-  //           minutes <= minutes + 1;
-  //         end
-  //       end else begin
-  //         seconds <= seconds + 1;
-  //       end
-  //     end
-  //   end
 
 endmodule
