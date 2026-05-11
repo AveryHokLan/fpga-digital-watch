@@ -1,3 +1,12 @@
+//top_time_display_v1 - A top-level module for a time display on six seven-segment displays.
+//
+// Parameters:
+// CYCLES_PER_SECOND - The number of clock cycles in one second for the input clock
+//
+// Ports:
+// CLOCK_50 - The 50 MHz clock input.
+// SW [1:0] - Switches to select the time update rate (00:
+
 `timescale 1ns / 1ps
 
 module top_time_display_v1 #(

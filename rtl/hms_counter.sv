@@ -1,3 +1,22 @@
+//hms_counter - A module to count hours, minutes, and seconds for a digital clock.
+//
+// Parameters:
+// N_HOURS - The number of hours in the cycle (default 24).
+// N_MINUTES - The number of minutes in the cycle (default 60).
+// N_SECONDS - The number of seconds in the cycle (default 60).
+// W_HOURS - The bit width for the hours output (default 5 bits for 0-23).
+// W_MINUTES - The bit width for the minutes output (default 6 bits for 0-59).
+// W_SECONDS - The bit width for the seconds output (default 6 bits for 0-59).
+//
+// Ports:
+// clk - The clock signal for synchronizing the counter.
+// enable - When high, the counter updates on the rising edge of 'clk'.
+// hours - The current hour count (0 to N_HOURS-1).
+// minutes - The current minute count (0 to N_MINUTES-1).
+// seconds - The current second count (0 to N_SECONDS-1).
+
+
+
 `timescale 1ns / 1ps
 
 module hms_counter #(

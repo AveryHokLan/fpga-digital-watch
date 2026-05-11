@@ -1,3 +1,13 @@
+// binary_to_bcd - A module to convert a 7-bit binary number (0-99) to its BCD representation.
+//
+// Parameters:
+// None
+//
+// Ports:
+// bin - The 7-bit binary input representing a number from 0 to 99.
+// tens - The 4-bit BCD output for the tens digit.
+// ones - The 4-bit BCD output for the ones digit.
+
 `timescale 1ns / 1ps
 
 module binary_to_bcd (

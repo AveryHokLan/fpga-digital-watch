@@ -1,3 +1,17 @@
+//resettable_rate_generator - A module that generates a tick signal at a specified rate when enabled. The rate is determined by the CYCLE_COUNT parameter, which specifies how many clock cycles must pass before a tick is generated. The generator can be restarted by toggling the run signal.
+//
+// Parameters:
+// CYCLE_COUNT - The number of clock cycles in one period of the tick signal.
+//
+// Ports:
+// clk - The clock signal for synchronizing the generator.
+// run - When high, the generator runs and produces ticks at the specified rate.
+// tick - The output signal that goes high for one clock cycle at the end of each period defined by CYCLE_COUNT when run is high.
+//
+// Note:
+// If CYCLE_COUNT is set to 1, the tick will be high on every clock cycle when run is high.
+
+
 `timescale 1ns / 1ps
 
 module restartable_rate_generator #(
