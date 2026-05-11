@@ -11,6 +11,7 @@ module mod_n_counter #(
 );
 
   initial count = '0;
+  logic [WIDTH-1:0] next_count;
 
   always_ff @(posedge clk) begin
     if (rst) begin
@@ -19,10 +20,13 @@ module mod_n_counter #(
       if (count == WIDTH'(N - 1)) begin
         count <= '0;
       end else begin
-        count <= count + 1;
+        count <= next_count;
       end
     end
+  end
 
+  always_comb begin
+    next_count = count + 1;
   end
 
 endmodule
