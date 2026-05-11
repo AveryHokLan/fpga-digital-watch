@@ -22,7 +22,7 @@ module seven_segment #(
   logic [6:0] segments_active_high;
 
   always_comb
-    if (blank) begin
+    if (blank || $isunknown(digit)) begin
       segments_active_high = 7'b0000000;
     end else begin
       unique case (digit)
