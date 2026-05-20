@@ -28,15 +28,15 @@ module button_auto_repeat #(
 
   assign pulse = rise | (button & pulse_train);
 
-  rising_edge_detector u_rise (
+  rising_edge_detector rise_detector (
       .clk(clk),
       .sig_in(button),
       .rise(rise)
   );
 
   button_hold_detect #(
-      .HOLD_CYCLES(HOLD_CYCLES)
-  ) u_hold (
+      .HOLD_CYCLES(HOLD_CYCLES - REPEAT_CYCLES + 1)
+  ) hold_detector (
       .clk(clk),
       .button(button),
       .held(held)
@@ -44,7 +44,7 @@ module button_auto_repeat #(
 
   restartable_rate_generator #(
       .CYCLE_COUNT(REPEAT_CYCLES)
-  ) u_repeat (
+  ) pulse_train_generator (
       .clk (clk),
       .run (held),
       .tick(pulse_train)
