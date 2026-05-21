@@ -16,7 +16,7 @@
 // ------------------------------------------------------------------
 `timescale 1ns / 1ps
 
-module user_top_watch_v1 #(
+module user_top_watch_v2 #(
     /* verilator lint_off UNUSEDPARAM */
     parameter int CYCLES_PER_SECOND = 50_000_000
     /* verilator lint_on UNUSEDPARAM */
@@ -113,8 +113,8 @@ module user_top_watch_v1 #(
   assign hours_inc = 1'b0;
   assign hours_dec = 1'b0;
 
-  assign minutes_tick = seconds_tick & (seconds_disp == 59);
-  assign hours_tick = minutes_tick & (minutes_disp == 59);
+  assign minutes_tick = seconds_tick & (seconds == 59);
+  assign hours_tick = minutes_tick & (minutes == 59);
 
   // Zero -extend counter values to display outputs
   assign hours_disp = {2'b0, hours};
@@ -123,9 +123,34 @@ module user_top_watch_v1 #(
 
   // Unused
   assign led = 10'b0;
-  assign blank_hours = 1'b0;
-  assign blank_minutes = 1'b0;
-  assign blank_seconds = 1'b0;
+
+  // --------------
+  // Mode Selection
+  // --------------
+
+  logic [2:0] mode_enable;
+  edit_mode_selector #(
+      .HOLD_CYCLES(CYCLES_PER_SECOND)
+  ) u_mode_selector (
+      .clk(clk),
+      .button(button[3]),
+      .mode_enable(mode_enable)
+  );
+
+  logic pwm_out;
+
+  pwm_generator #(
+      .PERIOD_CYCLES(CYCLES_PER_SECOND / 2),  // 2 Hz
+      .DUTY_CYCLES  (CYCLES_PER_SECOND / 10)  // 20% duty cycle
+  ) u_pwm_generator (
+      .clk(clk),
+      .rst(1'b0),
+      .pwm_out(pwm_out)
+  );
+
+  assign blank_seconds = mode_enable[0] ? pwm_out : 1'b0;
+  assign blank_minutes = mode_enable[1] ? pwm_out : 1'b0;
+  assign blank_hours   = mode_enable[2] ? pwm_out : 1'b0;
 
 
 

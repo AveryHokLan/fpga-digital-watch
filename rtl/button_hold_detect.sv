@@ -25,17 +25,7 @@ module button_hold_detect #(
 
   logic count_rst;
   logic count_enable;
-  logic [CountWidth -1:0] count;
-
-  always_comb begin
-    if (button) begin
-      count_rst = 1'b0;
-      count_enable = 1'b1;
-    end else begin
-      count_rst = 1'b1;
-      count_enable = 1'b0;
-    end
-  end
+  logic [CountWidth-1:0] count;
 
   mod_n_counter #(
       .N(CountMax + 1),
@@ -47,26 +37,23 @@ module button_hold_detect #(
       .count(count)
   );
 
-  logic held_latched;
-  logic held_rise;
-
-  initial held_latched = 1'b0;
-
+  // Moore output: held depends only on FSM state count
   always_comb begin
-    held_rise = button && (count == CountWidth'(CountMax));
+    held = (count == CountWidth'(CountMax));
   end
 
-  always_ff @(posedge clk) begin
+  // next-state control
+  always_comb begin
     if (!button) begin
-      held_latched <= 1'b0;
-    end else if (held_rise) begin
-      held_latched <= 1'b1;
+      count_rst    = 1'b1;
+      count_enable = 1'b0;
+    end else if (!held) begin
+      count_rst    = 1'b0;
+      count_enable = 1'b1;
+    end else begin
+      count_rst    = 1'b0;
+      count_enable = 1'b0;
     end
   end
 
-  always_comb begin
-    held = (held_latched || held_rise) && button;
-  end
-
 endmodule
-
