@@ -64,7 +64,6 @@ module decimal_display_driver (
   genvar i;
   generate
     for (i = 0; i < 3; i = i + 1) begin : g_digit_pair
-
       logic [3:0] tens;
       logic [3:0] ones;
 
@@ -72,27 +71,32 @@ module decimal_display_driver (
       logic [6:0] ones_seg;
 
       binary_to_bcd b2b (
-          .bin(value_a[i]),
+          .bin (value_a[i]),
           .tens(tens),
           .ones(ones)
       );
-
-      seven_segment u_tens_decoder (
+      seven_segment #(
+          .ACTIVE_LOW(1)
+      ) u_tens_decoder (
           .digit(tens),
           .blank(blank_a[i]),
           .segments(tens_seg)
       );
 
-      seven_segment u_ones_decoder (
+      seven_segment #(
+          .ACTIVE_LOW(1)
+      ) u_ones_decoder (
           .digit(ones),
           .blank(blank_a[i]),
           .segments(ones_seg)
       );
 
-      assign hex_a[2*i]     = blank_a[i] ? 7'b1111111 : ones_seg;
-      assign hex_a[2*i + 1] = blank_a[i] ? 7'b1111111 : tens_seg;
+      assign hex_a[2*i]   = ones_seg;
+      assign hex_a[2*i+1] = tens_seg;
 
     end
   endgenerate
+
+
 
 endmodule
