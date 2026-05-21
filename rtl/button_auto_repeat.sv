@@ -1,4 +1,5 @@
-// button auto repeat module. generates a single immediate pulse on a button press, then produces repeated pulses at a fixed rate if the button is held down.
+// button auto repeat module.
+// generates a single immediate pulse on a button press, then produces repeated pulses at a fixed rate if the button is held down.
 //
 // parameters:
 // HOLD_CYCLES: number of clock cycles the button must be held before auto repeat starts
