@@ -32,15 +32,7 @@ module user_top_stopwatch_v1 #(
     output logic blank_minutes,
     output logic blank_seconds
 );
-  assign led = clk ? sw : ~sw;
 
-  assign blank_hours = button[0];
-  assign blank_minutes = button[1];
-  assign blank_seconds = button[2];
-
-  //   assign hours_disp = button[3] ? 7'd16 : 7'd7;
-  //   assign minutes_disp = button[3] ? 7'd38 : 7'd23;
-  //   assign seconds_disp = button[3] ? 7'd59 : 7'd45;
 
   logic start_stop_pulse;
 
@@ -119,19 +111,26 @@ module user_top_stopwatch_v1 #(
 
 
 
-  assign hours_disp   = snapshot_minutes;
+  assign hours_disp = snapshot_minutes;
   assign minutes_disp = {1'b0, snapshot_seconds};
   assign seconds_disp = snapshot_centiseconds;
 
+  //Unused
+  assign led = 10'b0;
+  assign blank_hours = 1'b0;
+  assign blank_minutes = 1'b0;
+  assign blank_seconds = 1'b0;
 
   /* verilator lint_off UNUSEDSIGNAL */
-  logic [1:0] unused_buttons;
+  logic unused_button_3;
+  logic unused_button_2;
   logic [9:0] unused_sw;
 
-  assign unused_buttons = button[3:2];
+  assign unused_button_2 = button[2];
+  assign unused_button_3 = button[3];
   assign unused_sw = sw;
-  /* verilator lint_on UNUSEDSIGNAL */
 
+  /* verilator lint_on UNUSEDSIGNAL */
 
 
 endmodule

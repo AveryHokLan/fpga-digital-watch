@@ -37,16 +37,6 @@ module user_top_timer_v1 #(
     output logic blank_seconds
 );
 
-  //   assign led = clk ? sw : ~sw;
-
-  //   assign blank_hours = button[0];
-  //   assign blank_minutes = button[1];
-  //   assign blank_seconds = button[2];
-
-  //   assign hours_disp = button[3] ? 7'd16 : 7'd7;
-  //   assign minutes_disp = button[3] ? 7'd38 : 7'd23;
-  //   assign seconds_disp = button[3] ? 7'd59 : 7'd45;
-
   // ------------------
   // Core Functionality : countdown
   // ------------------
@@ -63,7 +53,7 @@ module user_top_timer_v1 #(
   logic [5:0] seconds;
 
   editable_countdown #(
-      .MAX  (60),  // 0-60 seconds
+      .MAX  (59),  // 0-59 seconds
       .WIDTH(6)
   ) u_seconds (
       .clk(clk),
@@ -88,7 +78,7 @@ module user_top_timer_v1 #(
   assign minutes_tick = seconds_tick && seconds_borrow;
 
   editable_countdown #(
-      .MAX  (60),  // 0-59 minutes
+      .MAX  (59),  // 0-59 minutes
       .WIDTH(6)
   ) u_minutes (
       .clk(clk),
@@ -111,7 +101,7 @@ module user_top_timer_v1 #(
   assign hours_tick = minutes_tick && minutes_borrow;
 
   editable_countdown #(
-      .MAX  (24),  // 0-23 hours
+      .MAX  (23),  // 0-23 hours
       .WIDTH(5)
   ) u_hours (
       .clk(clk),
@@ -209,7 +199,7 @@ module user_top_timer_v1 #(
   // 000: normal mode
   // --------------
 
-  logic running;
+  logic running = 1'b0;
   logic start_stop_pulse;
 
   logic count_not_zero;
@@ -218,12 +208,14 @@ module user_top_timer_v1 #(
 
 
   always_ff @(posedge clk) begin
-    if (counter_clr || !count_not_zero) begin
+    if (counter_clr || !count_not_zero || (mode_enable != 3'b000)) begin
       running <= 1'b0;
-    end else if ((mode_enable == 3'b000) && start_stop_pulse) begin
+    end else if (start_stop_pulse) begin
       running <= ~running;
     end
   end
+
+
   // Derive 1 Hz tick from system clock
   restartable_rate_generator #(
       .CYCLE_COUNT(CYCLES_PER_SECOND)
@@ -242,20 +234,21 @@ module user_top_timer_v1 #(
   );
 
 
-
-  //unused
-  assign counter_clr = button[2];
-
-  assign led[5:0] = sw[5:0];
-  assign led[6] = running;
-  assign led[9] = hours_borrow;
-  assign led[8] = counter_clr;
-  assign led[7] = button[2];
+  //Unused
+  assign counter_clr = 1'b0;
+  assign led = 10'b0;
 
   /* verilator lint_off UNUSEDSIGNAL */
-  logic [3:0] unused_sw;
-  assign unused_sw = sw[9:6];
+  logic unused_button_2;
+  logic [9:0] unused_sw;
+  logic unused_hours_borrow;
+
+  assign unused_button_2 = button[2];
+  assign unused_sw = sw;
+  assign unused_hours_borrow = hours_borrow;
   /* verilator lint_on UNUSEDSIGNAL */
+
+
 
 `ifdef FORMAL
   assign probe_running = running;
