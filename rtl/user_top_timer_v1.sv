@@ -17,10 +17,14 @@
 `timescale 1ns / 1ps
 
 module user_top_timer_v1 #(
-    /* verilator lint_off UNUSEDPARAM */
+
     parameter int CYCLES_PER_SECOND = 50_000_000
-    /* verilator lint_on UNUSEDPARAM */
+
 ) (
+`ifdef FORMAL
+    output logic probe_running,
+    output logic [2:0] probe_mode_enable,
+`endif
     input logic clk,
     input logic [3:0] button,
     input logic [9:0] sw,
@@ -206,6 +210,7 @@ module user_top_timer_v1 #(
   // --------------
 
   logic running;
+  logic start_stop_pulse;
 
   logic count_not_zero;
 
@@ -228,7 +233,7 @@ module user_top_timer_v1 #(
       .tick(seconds_tick)
   );
 
-  logic start_stop_pulse;
+
 
   rising_edge_detector start_stop_detector (
       .clk(clk),
@@ -251,6 +256,11 @@ module user_top_timer_v1 #(
   logic [3:0] unused_sw;
   assign unused_sw = sw[9:6];
   /* verilator lint_on UNUSEDSIGNAL */
+
+`ifdef FORMAL
+  assign probe_running = running;
+  assign probe_mode_enable = mode_enable;
+`endif
 
 
 endmodule

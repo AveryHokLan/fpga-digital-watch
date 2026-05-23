@@ -72,15 +72,15 @@ module user_top_brightness_wrapper #(
 
   always_comb begin
     case (sw[9:8])
-      2'b00:   duty_threshold = PWMPeriod / 8;
-      2'b01:   duty_threshold = PWMPeriod / 4;
-      2'b11:   duty_threshold = PWMPeriod / 2;
-      2'b10:   duty_threshold = PWMPeriod;
-      default: duty_threshold = PWMPeriod;
+      2'b00:   duty_threshold = (PWMWidth + 1)'(PWMPeriod / 8);
+      2'b01:   duty_threshold = (PWMWidth + 1)'(PWMPeriod / 4);
+      2'b11:   duty_threshold = (PWMWidth + 1)'(PWMPeriod / 2);
+      2'b10:   duty_threshold = (PWMWidth + 1)'(PWMPeriod);
+      default: duty_threshold = (PWMWidth + 1)'(PWMPeriod);
     endcase
   end
 
-  assign pwm_on = pwm_count < duty_threshold;
+  assign pwm_on = {1'b0, pwm_count} < duty_threshold;
   assign pwm_blank = ~pwm_on;
 
   assign blank_hours = app_blank_hours | pwm_blank;
