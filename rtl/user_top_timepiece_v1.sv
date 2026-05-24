@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module user_top_brightness_timepiece_v1 #(
+module user_top_timepiece_v1 #(
     parameter int CYCLES_PER_SECOND = 50_000_000
 ) (
     input logic clk,
