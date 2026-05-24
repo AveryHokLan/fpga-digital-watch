@@ -44,6 +44,10 @@ module user_top_timer_v1 #(
   logic counter_clr;
   logic hours_borrow;
 
+  logic countdown_tick;
+
+  assign countdown_tick = (mode_enable == 3'b000) && running && seconds_tick;
+
   // Seconds
   logic seconds_borrow;
   logic seconds_edit;
@@ -58,7 +62,7 @@ module user_top_timer_v1 #(
   ) u_seconds (
       .clk(clk),
       .clr(counter_clr),
-      .tick(seconds_tick),  // In stopped mode, start_stop_pulse acts as tick to decrement time
+      .tick(countdown_tick),
       .edit_mode(seconds_edit),
       .inc(seconds_inc),
       .dec(seconds_dec),
@@ -75,7 +79,7 @@ module user_top_timer_v1 #(
   logic minutes_tick;
   logic [5:0] minutes;
 
-  assign minutes_tick = seconds_tick && seconds_borrow;
+  assign minutes_tick = countdown_tick && seconds_borrow;
 
   editable_countdown #(
       .MAX  (59),  // 0-59 minutes
@@ -128,16 +132,44 @@ module user_top_timer_v1 #(
   // 010: edit minutes
   // 100: edit hours
 
-  logic [2:0] mode_enable;
+  logic [2:0] raw_mode_enable;
+  logic [2:0] mode_enable = 3'b000;
 
   edit_mode_selector #(
-      .HOLD_CYCLES(CYCLES_PER_SECOND)  // Hold for 1 second to enter edit mode
+      .HOLD_CYCLES(CYCLES_PER_SECOND)
   ) u_edit_mode_selector_timer (
       .clk(clk),
       .button(button[3]),
-      .mode_enable(mode_enable)
+      .mode_enable(raw_mode_enable)
   );
 
+  always_ff @(posedge clk) begin
+    case (mode_enable)
+      3'b000: begin
+        if (raw_mode_enable == 3'b001) mode_enable <= 3'b001;
+        else mode_enable <= 3'b000;
+      end
+
+      3'b001: begin
+        if (raw_mode_enable == 3'b010) mode_enable <= 3'b010;
+        else mode_enable <= 3'b001;
+      end
+
+      3'b010: begin
+        if (raw_mode_enable == 3'b100) mode_enable <= 3'b100;
+        else mode_enable <= 3'b010;
+      end
+
+      3'b100: begin
+        if (raw_mode_enable == 3'b000 && !running) mode_enable <= 3'b000;
+        else mode_enable <= 3'b100;
+      end
+
+      default: begin
+        mode_enable <= 3'b000;
+      end
+    endcase
+  end
   logic pwm_out;
 
   pwm_generator #(
