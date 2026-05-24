@@ -21,7 +21,7 @@ module user_top_brightness_timepiece #(
   logic app_blank_seconds;
 
   user_top_timepiece_v1 #(
-      .CYCLES_PER_SECOND(50_000_000)
+      .CYCLES_PER_SECOND(CYCLES_PER_SECOND)
   ) u_user_top (
       .clk          (clk),
       .button       (button),

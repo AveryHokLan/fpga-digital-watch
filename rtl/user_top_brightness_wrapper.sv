@@ -21,7 +21,7 @@ module user_top_brightness_wrapper #(
   logic app_blank_seconds;
 
   user_top #(
-      .CYCLES_PER_SECOND(50_000_000)
+      .CYCLES_PER_SECOND(CYCLES_PER_SECOND)
   ) u_user_top (
       .clk          (clk),
       .button       (button),
