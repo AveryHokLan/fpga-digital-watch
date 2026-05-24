@@ -54,9 +54,11 @@ module user_top_brightness_wrapper #(
       .count(pwm_count)
   );
 
+  logic [1:0] brightness_selection;
+  assign brightness_selection = sw[9:8];
 
   always_comb begin
-    case (sw[9:8])
+    case (brightness_selection)
       2'b00:   brightness_threshold = (PWMWidth + 1)'(PWMPeriod / 8);
       2'b01:   brightness_threshold = (PWMWidth + 1)'(PWMPeriod / 4);
       2'b11:   brightness_threshold = (PWMWidth + 1)'(PWMPeriod / 2);
